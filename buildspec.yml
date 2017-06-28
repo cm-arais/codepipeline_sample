@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - npm install 
+      - node ./index.js > result.log
+
+artifacts:
+  files:
+    - result.log
