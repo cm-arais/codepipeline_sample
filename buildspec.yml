@@ -3,8 +3,8 @@ version: 0.2
 phases:
   build:
     commands:
-      - npm install 
-      - node ./index.js > result.log
+      - make docker-run
+      - make build
 
 artifacts:
   files:
