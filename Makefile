@@ -24,5 +24,5 @@ build:
 		-it asciidoctor-jp-aws \
 		bash -c ${asciidoctor-build}
 
-build-ci:
+build-for-awscodebuild:
 	@ eval "${asciidoctor-build}"

@@ -5,7 +5,7 @@ phases:
   build:
     commands:
       - ls -al
-      - asciidoctor index.adoc -a outdir=.build -a imagesdir=images -a imagesoutdir=.build/images -a stylesheet=foundation.css -a stylesdir=/stylesheets/ -o .build/index.html -r asciidoctor-diagram
+      - make build-for-awscodebuild
 
 artifacts:
   files:
