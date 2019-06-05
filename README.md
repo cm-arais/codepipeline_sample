@@ -1,2 +1,4 @@
 # codepipeline_sample
 codepieline でデプロイを行うサンプル用リポジトリです。
+
+らしいです。
