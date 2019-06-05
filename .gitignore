@@ -66,3 +66,5 @@ typings/
 
 # Build and Dist
 .build
+
+template.yml

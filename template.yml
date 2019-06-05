@@ -74,7 +74,50 @@ Resources:
                   - cloudformation:*
                 Resource: "*"
                 Effect: Allow
-
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+              - Resource:
+                  - !Join [
+                      "",
+                      [
+                        "arn:aws:s3:::",
+                        !Ref CodePipelineArtifactStoreBucket,
+                        "/*",
+                      ],
+                    ]
+                  - !Join [
+                      "",
+                      ["arn:aws:s3:::", !Ref CodePipelineArtifactStoreBucket],
+                    ]
+                Effect: Allow
+                Action:
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:GetBucketPolicy
+                  - s3:GetObject
+                  - s3:ListBucket
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -100,6 +143,21 @@ Resources:
               OutputArtifacts:
                 - Name: SourceArtifact
               RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: BuildOutput
+              RunOrder: 1
         - Name: Deploy
           Actions:
             - Name: DeployAction
@@ -109,11 +167,28 @@ Resources:
                 Provider: S3
                 Version: 1
               InputArtifacts:
-                - Name: SourceArtifact
+                - Name: BuildOutput
               Configuration:
                 BucketName: !Ref DocumentBucket
                 Extract: true
               RunOrder: 1
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: "CODEPIPELINE"
+      Source:
+        Type: "CODEPIPELINE"
+        BuildSpec: "buildspec.yml"
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/docker:1.12.1"
+        Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          - Name: AWS_DEFAULT_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !Ref CodeBuildServiceRole
 
   GitHubSecret:
     Type: AWS::SecretsManager::Secret
