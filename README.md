@@ -1,2 +1,2 @@
 # codepipeline_sample
-codepieline でデプロイを行うサンプル用リポジトリです。です。です。
+codepieline でデプロイを行うサンプル用リポジトリです。どすえ。
