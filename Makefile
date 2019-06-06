@@ -26,6 +26,3 @@ build:
 
 build-for-awscodebuild:
 	@ eval ${asciidoctor-build}
-
-echoo:
-	@ echo ${asciidoctor-build}

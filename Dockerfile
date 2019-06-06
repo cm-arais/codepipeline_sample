@@ -1,4 +1,4 @@
-FROM htakeuchi/docker-asciidoctor-jp
+FROM cmwadayusuke/asciidoctor-jp-aws-cli
 
 WORKDIR /root
 
