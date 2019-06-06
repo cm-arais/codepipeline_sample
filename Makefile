@@ -25,4 +25,7 @@ build:
 		bash -c ${asciidoctor-build}
 
 build-for-awscodebuild:
-	@ eval "${asciidoctor-build}"
+	@ eval ${asciidoctor-build}
+
+echoo:
+	@ echo ${asciidoctor-build}
